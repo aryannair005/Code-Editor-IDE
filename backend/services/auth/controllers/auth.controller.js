@@ -21,6 +21,7 @@ export const login = async(req,res)=>{
         }
 
         
+
         return res.json({decoded})
     }catch(error){
         return res.status(500).json({message:`Login error ${error}`})
