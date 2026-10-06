@@ -1,11 +1,28 @@
 import express from "express"
+import cors from "cors"
+import cookieParser from "cookie-parser"
+import morgan from "morgan"
 
 
 import dotenv from "dotenv"
+import proxy from "express-http-proxy"
 dotenv.config()
 
-const port = process.env.PORT || 8000
+
 const app = express()
+app.use(express.json())
+app.use(cors({
+    origin:process.env.FRONTEND_URL,
+    credentials:true
+}))
+
+app.use(cookieParser())
+app.use(morgan("dev"))
+
+
+app.use("/auth",proxy(process.env.AUTH_SERVICE))
+
+const port = process.env.PORT || 8000
 
 app.get("/",(req,res)=>{
     return res.json({message:"/ route"})
