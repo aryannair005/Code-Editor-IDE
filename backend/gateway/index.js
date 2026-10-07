@@ -23,6 +23,7 @@ app.use(morgan("dev"))
 
 
 app.use("/api/auth",proxy(process.env.AUTH_SERVICE))
+app.use("/api/project",protect,proxy(process.env.PROJECT_SERVICE))
 app.get("/api/me",protect,getCurrentUser)
 
 const port = process.env.PORT || 8000
