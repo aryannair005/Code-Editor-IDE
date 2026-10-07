@@ -1,3 +1,4 @@
+import redis from "../../../shared/redis/redis.js"
 import Project from "../models/project.model.js"
 
 export const createProject = async (req,res) =>{
@@ -13,6 +14,8 @@ export const createProject = async (req,res) =>{
             description
         })
 
+        const key =`projects-${userId}`
+        await redis.del(key)
         return res.status(201).json(project)
     }catch(error){
         return res.status(500).json({message:`create project error : ${error}`})
@@ -26,11 +29,18 @@ export const getProjects = async (req,res) =>{
             return res.status(401).json({message:"userId is required"})
         }
 
+        const key = `projects-${userId}`
+        let result = await redis.get(key)
+        if(result){
+            return res.status(200).json(JSON.parse(result))
+        }
+
         const projects = await Project.find({
             owner:userId,
         }).sort({updatedAt:-1})
 
-        return res.status(201).json(projects)
+        await redis.set(key,JSON.stringify(projects))
+        return res.status(200).json(projects)
     }catch(error){
         return res.status(500).json({message:`Get all projects error : ${error}`})
     }
@@ -39,8 +49,18 @@ export const getProjects = async (req,res) =>{
 
 export const getProjectById = async(req,res) =>{
     try{
+        const userId = req.headers["x-user-id"]
+
+        if (!userId) {
+            return res.status(401).json({
+                message: "userId is required"
+            })
+        }
         const {id} = req.params
-        const project = await Project.findById(id)
+        const project = await Project.findOne({
+            _id:id,
+            owner:userId
+        })
         if(!project){
             return res.status(404).json({message:"Project not found"})
         }
@@ -60,13 +80,20 @@ export const getStarredProjects = async (req,res) =>{
         if(!userId){
             return res.status(401).json({message:"userId is required"})
         }
+        const key = `starred-projects-${userId}`
+        let result = await redis.get(key)
+        if(result){
+            return res.status(200).json(JSON.parse(result))
+        }
 
         const projects = await Project.find({
             owner:userId,
             starred:true
         }).sort({updatedAt:-1})
 
-        return res.status(201).json(projects)
+        await redis.set(key,JSON.stringify(projects))
+
+        return res.status(200).json(projects)
     }catch(error){
         return res.status(500).json({message:`Get all starred projects error : ${error}`})
     }
@@ -74,13 +101,27 @@ export const getStarredProjects = async (req,res) =>{
 
 export const toggleStar =async (req,res) =>{
     try{
+        const userId = req.headers["x-user-id"]
+
+        if (!userId) {
+            return res.status(401).json({
+                message: "userId is required"
+            })
+        }
         const {id} = req.params
-        const project = await Project.findById(id)
+        const project = await Project.findOne({
+            _id:id,
+            owner:userId
+        })
         if(!project){
             return res.status(404).json({message:"Project not found"})
         }
         project.starred = !project.starred
         await project.save()
+
+        const key = `starred-projects-${userId}`
+        await redis.del(`projects-${userId}`)   
+        await redis.del(key)
 
         return res.status(200).json(project)
     }catch(error){
@@ -88,14 +129,27 @@ export const toggleStar =async (req,res) =>{
     }
 }
 
-export default deleteProject = async(req,res) =>{
+export const deleteProject = async(req,res) =>{
     try{
+        const userId = req.headers["x-user-id"]
+
+        if (!userId) {
+            return res.status(401).json({
+                message: "userId is required"
+            })
+        }
+
         const {id} = req.params
-        const project = await Project.findByIdAndDelete(id)
+        const project = await Project.findOneAndDelete({
+            _id:id,
+            owner:userId
+        })
         
         if(!project){
             return res.status(404).json({message:"Project not found"})
         }
+        await redis.del(`projects-${userId}`)
+        await redis.del(`starred-projects-${userId}`)
 
         return res.status(200).json(project)
     }catch(error){
