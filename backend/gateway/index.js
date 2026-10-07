@@ -8,6 +8,7 @@ import dotenv from "dotenv"
 import proxy from "express-http-proxy"
 import { protect } from "./middleware/protect.js"
 import { getCurrentUser } from "./controllers/user.controller.js"
+import { proxyWithHeader } from "./utils/proxyWithHeader.js"
 dotenv.config()
 
 
@@ -23,7 +24,7 @@ app.use(morgan("dev"))
 
 
 app.use("/api/auth",proxy(process.env.AUTH_SERVICE))
-app.use("/api/project",protect,proxy(process.env.PROJECT_SERVICE))
+app.use("/api/project",protect,proxyWithHeader(process.env.PROJECT_SERVICE))
 app.get("/api/me",protect,getCurrentUser)
 
 const port = process.env.PORT || 8000
