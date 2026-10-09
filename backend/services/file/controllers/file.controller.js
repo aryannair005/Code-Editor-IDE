@@ -1,4 +1,5 @@
 import File from "../models/file.model.js"
+import { buildTree } from "../utils/buildTree.js"
 
 export const createRootFolder = async (req,res) =>{
     try{
@@ -167,9 +168,32 @@ export const getFile = async (req,res) =>{
             return res.status(400).json({message:"file not found"})
         }
 
-        return res.status(400).json(file)
+        return res.status(200).json(file)
     }catch(error){
         return res.status(500).json({message:`get file error : ${error}`})
     }
 }
+
+
+export const getTree = async (req,res) =>{
+    try{
+        const userId = req.headers["x-user-id"]
+        const {projectId} = req.params
+        const files = await File.find({
+            projectId,
+            owner:userId,
+            isDeleted:false
+        }).sort({
+            name:1,
+            type:-1,
+        })
+        const tree = await buildTree(files)
+
+        return res.status(200).json(tree)
+    }catch(error){
+        return res.status(500).json({message:`get tree error : ${error}`})
+    }
+}
+
+
 
