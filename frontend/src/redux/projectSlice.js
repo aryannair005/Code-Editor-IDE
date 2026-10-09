@@ -7,13 +7,24 @@ const projectSlice = createSlice({
     },
     reducers:{
        setProjects:(state,action)=>{
-        state.projects=action.payload
+        state.projects=Array.isArray(action.payload)
+        ?action.payload
+        :[];
        },
        addNewProject:(state,action)=>{
         state.projects.unshift(action.payload)
-       }
+       },
+       starProject:(state,action)=>{
+        const project = state.projects.find(p=>p._id == action.payload)
+        if(project){
+            project.starred = !project.starred
+        }
+       },
+       setDeleteProject:(state,action)=>{
+            state.projects= state.projects.filter(p=>p._id!=action.payload)
+        }
     }
 })
 
-export const {setProjects,addNewProject}= projectSlice.actions
+export const {setProjects,addNewProject,starProject,setDeleteProject}= projectSlice.actions
 export default projectSlice.reducer

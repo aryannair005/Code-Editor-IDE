@@ -36,12 +36,21 @@ const Dashboard = () => {
       dispatch(setProjects(data))
       setLoadingProjects(false)
     }
-    const fetchStarredProjects = async()=>{
-      setLoadingProjects(true)
-      const data = await getStarredProjects()
-      dispatch(setProjects(data))
-      setLoadingProjects(false)
+    const fetchStarredProjects = async () => {
+    setLoadingProjects(true);
+
+    try {
+      const data = await getStarredProjects();
+
+      if (Array.isArray(data)) {
+        dispatch(setProjects(data));
+      }
+    } catch (error) {
+        console.error("Failed to fetch starred projects:", error);
+    } finally {
+        setLoadingProjects(false);
     }
+  };
 
     useEffect(()=>{
       if(activeSession == "projects"){
@@ -123,7 +132,7 @@ const Dashboard = () => {
           ):(
           <div className='mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
             {projects.map((p,i)=>(
-              <ProjectCard/>
+              <ProjectCard  key={p._id}project={p}/>
             ))}
             
           </div>

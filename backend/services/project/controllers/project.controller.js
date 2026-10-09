@@ -94,10 +94,14 @@ export const getStarredProjects = async (req,res) =>{
         await redis.set(key,JSON.stringify(projects))
 
         return res.status(200).json(projects)
-    }catch(error){
-        return res.status(500).json({message:`Get all starred projects error : ${error}`})
-    }
-}
+    }catch (error) {
+    console.error("Get all starred projects error:", error);
+
+    return res.status(500).json({
+        message: "Failed to fetch starred projects",
+        error: error.message,
+    });
+}}  
 
 export const toggleStar =async (req,res) =>{
     try{
