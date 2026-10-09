@@ -9,12 +9,15 @@ import NavBar from '../components/NavBar.jsx'
 import SideBar from '../components/SideBar.jsx'
 import { Folder, Loader2, Plus } from 'lucide-react'
 import { getProjects, getStarredProjects } from '../features/project.js'
-import { setProjects, setStarredProjects } from '../redux/projectSlice.js'
+import { setProjects } from '../redux/projectSlice.js'
+import ProjectCard from '../components/ProjectCard.jsx'
+import CreateProjectModel from '../components/CreateProjectModel.jsx'
 
 const Dashboard = () => {
     const [loading,setLoading] = useState(false)
     const [activeSession,setActiveSession] = useState("projects")
     const[loadingProjects,setLoadingProjects] = useState(false)
+    const [openModel,setOpenModel] = useState(false)
     const dispatch = useDispatch()
 
     const {userData} = useSelector(state=>state.user)
@@ -36,7 +39,7 @@ const Dashboard = () => {
     const fetchStarredProjects = async()=>{
       setLoadingProjects(true)
       const data = await getStarredProjects()
-      dispatch(setStarredProjects(data))
+      dispatch(setProjects(data))
       setLoadingProjects(false)
     }
 
@@ -88,7 +91,9 @@ const Dashboard = () => {
               </h1>
               <p className='mt-1 text-[13.5px] text-slate-500 dark:text-slate-400'>Ready to build something amazing today?</p>
             </div>
-            <button className='flex shrink-0 items-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2.5 text-[13.5px] font-semibold text-white shadow-sm transition-opacity duration-150 hover:opacity-90 dark:bg-white dark:text-slate-900'>
+            <button 
+            onClick={()=>setOpenModel(true)}
+            className='flex shrink-0 items-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2.5 text-[13.5px] font-semibold text-white shadow-sm transition-opacity duration-150 hover:opacity-90 dark:bg-white dark:text-slate-900'>
               <Plus size={16}/>
               New Project
             </button>
@@ -115,10 +120,18 @@ const Dashboard = () => {
                 {activeSession == "starred" ? "Star a project to see it here.":"Create your first project and start building something amazing!"}
               </p>
             </div>
-          ):<></>}
+          ):(
+          <div className='mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+            {projects.map((p,i)=>(
+              <ProjectCard/>
+            ))}
+            
+          </div>
+          )}
           </div>
         </div>
       </div>
+      {openModel &&  <CreateProjectModel openModel={openModel} onClose={()=>setOpenModel(false)}/>}
     </div>
     )
   
