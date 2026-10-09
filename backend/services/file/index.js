@@ -1,6 +1,7 @@
 import express from "express"
 import dotenv from "dotenv"
 import { connectDb } from "./config/db.js"
+import router from "./routes/file.route.js"
 
 dotenv.config()
 
@@ -8,7 +9,7 @@ dotenv.config()
 
 const app = express()
 app.use(express.json())
-
+app.use("/",router)
 
 const port = process.env.PORT || 8003
 
