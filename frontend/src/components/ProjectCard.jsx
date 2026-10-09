@@ -44,7 +44,7 @@ const ProjectCard = ({project}) => {
       <h3 className='mb-1.5 truncate pr-6 text-[14px] font-semibold tracking-tight text-zinc-900 dark:text-white'>{project.name}</h3>
       <p className='line-clamp-2 min-h-[2.5em] text-[12.5px] leading-snug text-zinc-500'>{project.description || "No Description"}</p> 
 
-      <div className='mt-4 flex items-center justify-end border-t border-black/[0.05] pt-3 dark:border-white/[0.06]'>
+      <div className='mt-4 flex items-center justify-end border-t border-black/5 pt-3 dark:border-white/6'>
       {confirmDelete?(
         <motion.div
         initial={{opacity:0}}
