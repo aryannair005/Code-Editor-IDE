@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import TopBar from '../components/TopBar'
 import ActiveBar from '../components/ActiveBar'
 import { AnimatePresence } from 'motion/react'
