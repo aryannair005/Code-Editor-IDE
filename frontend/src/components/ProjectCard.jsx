@@ -3,13 +3,15 @@ import {motion} from "motion/react"
 import { Star, Trash2 } from 'lucide-react'
 import { deleteProject, toggleStar } from '../features/project'
 import { useDispatch } from 'react-redux'
-import { setDeleteProject, starProject } from '../redux/projectSlice'
+import { setCurrentProject, setDeleteProject, starProject } from '../redux/projectSlice'
+import { useNavigate } from 'react-router-dom'
 
 const ProjectCard = ({project}) => {
   const [loadingStar,setLoadingStar] = useState(false)
   const [loadingDelete,setLoadingDelete] = useState(false)
   const [confirmDelete,setConfirmDelete] = useState(false)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const hangleToggleStar = async()=>{
     await toggleStar(project?._id)
     dispatch(starProject(project?._id))
@@ -28,6 +30,10 @@ const ProjectCard = ({project}) => {
     exit={{opacity:0,scale:0.97}}
     whileHover={{y:-3}}
     transition={{duration:0.18,ease:"easeOut"}}
+    onClick={()=>{
+      dispatch(setCurrentProject(project))
+      navigate(`/project/${project._id}`)
+    }}
     className='group relative cursor-pointer rounded-2xl border border-black/6 bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all duration-200 hover:shadow-[0_8px_24px_rgba(0,0,0,0.06)] dark:border-white/[0.07] dark:bg-white/3  dark:shadow-none dark:hover:border-white/[0.14] dark:hover:bg-white/4.5'
     >
       <motion.div
