@@ -2,8 +2,7 @@ import React from "react";
 import { motion } from "motion/react";
 import { FolderTree, RefreshCcw } from "lucide-react";
 import Folder from "./Folder";
-
-const Explorer = ({ projectId, tree, reloadTree }) => {
+function Explorer({ projectId, tree, reloadTree, openFile }) {
   return (
     <motion.div
       initial={{ opacity: 0, x: -16, width: 0 }}
@@ -16,20 +15,29 @@ const Explorer = ({ projectId, tree, reloadTree }) => {
         <span className="text-[11px] font-semibold tracking-wider text-zinc-500">
           EXPLORER
         </span>
+
         <motion.button
           whileHover={{ rotate: 60 }}
-          whiteTap={{ scale: 0.9 }}
+          whileTap={{ scale: 0.9 }}
           transition={{ duration: 0.2 }}
           onClick={reloadTree}
           className="rounded-md p-1 text-zinc-400 transition-colors hover:bg-white/[0.07] hover:text-white"
           title="Refresh"
         >
-          <RefreshCcw />
+          <RefreshCcw size={14} />
         </motion.button>
       </div>
+
       <div
-        className="w-72 flex-1 overflow-y-auto px-1 py-2 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent  [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/8 hover:[&::-webkit-scrollbar-thumb]:bg-white/15
-      [&::-webkit-scrollbar-thumb]:transition-colors"
+        className="
+          w-72 flex-1 overflow-y-auto px-1 py-2
+          [&::-webkit-scrollbar]:w-1.5
+          [&::-webkit-scrollbar-track]:bg-transparent
+          [&::-webkit-scrollbar-thumb]:rounded-full
+          [&::-webkit-scrollbar-thumb]:bg-white/8
+          hover:[&::-webkit-scrollbar-thumb]:bg-white/15
+          [&::-webkit-scrollbar-thumb]:transition-colors
+        "
         style={{
           scrollbarWidth: "thin",
           scrollbarColor: "rgba(255,255,255,0.1) transparent",
@@ -42,12 +50,18 @@ const Explorer = ({ projectId, tree, reloadTree }) => {
           </div>
         ) : (
           tree.map((node) => (
-            <Folder projectId={projectId} tree={tree} reloadTree={reloadTree} node={node} />
+            <Folder
+              projectId={projectId}
+              node={node}
+              tree={tree}
+              reloadTree={reloadTree}
+              openFile={openFile}
+            />
           ))
         )}
       </div>
     </motion.div>
   );
-};
+}
 
 export default Explorer;
