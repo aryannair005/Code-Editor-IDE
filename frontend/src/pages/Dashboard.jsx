@@ -69,7 +69,7 @@ function Dashboard() {
                     </div>
 
                     <h2 className='mb-2 text-xl font-bold text-slate-900 dark:text-white'>
-                        Welcome to VertexAI
+                        Welcome to Synaptix IDE
                     </h2>
 
                     <p className='mb-6 text-[13.5px] leading-relaxed text-slate-500 dark:text-slate-400'>
