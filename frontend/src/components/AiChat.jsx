@@ -185,7 +185,7 @@ function AiChat({ projectId, history = [], reloadTree }) {
     return (
         <div className='flex w-80 shrink-0 flex-col border-l border-white/[0.06] bg-[#111113]/90 backdrop-blur-xl'>
             <div className='flex h-10 shrink-0 items-center gap-2 border-b border-white/[0.06] px-3'>
-                <span className='text-xs font-semibold tracking-wider text-zinc-300'>VertexAI Chat</span>
+                <span className='text-xs font-semibold tracking-wider text-zinc-300'>Synaptix Chat</span>
             </div>
 
             <div className='flex-1 space-y-3 overflow-y-auto p-3'>
