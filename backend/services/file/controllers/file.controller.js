@@ -1,58 +1,59 @@
 import File from "../models/file.model.js"
 import { buildTree } from "../utils/buildTree.js"
 
-export const createRootFolder = async (req,res) =>{
-    try{
-        const {projectId,projectName} = req.body
-        const userId = req.headers["x-user-id"]
+export const createRootFolder=async (req,res)=>{
+    try {
+        const {projectId,projectName}=req.body
+        const userId=req.headers["x-user-id"]
         if(!projectId || !projectName){
-            return res.status(400).json({message:"projectId or name is required"})
+            return res.status(400).json({message:"projectId and name is required!"})
         }
-
-        const existingRootFolder = await File.findOne({
+       
+        const existingRootFolder=await File.findOne({
             projectId,
             parentId:null,
             isDeleted:false
         })
+
         if(existingRootFolder){
-            return res.status(400).json({message:"projectId and name is required"})
+            return res.status(400).json({message:"root folder already exist"})
         }
-        const rootFolder = await File.create({
+
+        const rootFolder=await File.create({
             owner:userId,
             name:projectName,
             projectId,
             type:"folder",
-            parentId:null,
-
+            parentId:null
         })
 
         return res.status(201).json(rootFolder)
-    }catch(error){
-        return res.status(500).json({message:`Create root folder error : ${error}`})
+
+    } catch (error) {
+         return res.status(500).json({message:`create root folder error ${error}`})
     }
 }
 
-export const createFolder = async (req,res) =>{
-    try{
-        const {projectId,name,parentId} = req.body
-        const userId = req.headers["x-user-id"]
-
+export const createFolder= async (req,res)=>{
+    try {
+        const {projectId,name,parentId}=req.body
+        const userId=req.headers["x-user-id"]
         if(!projectId || !name || !parentId){
-            return res.status(400).json({message:"projectId, parentId, or name are required"})
+            return res.status(400).json({message:"projectId,parentId and name are required!"})
         }
-
-        const exist = await File.findOne({
+       
+        const exist=await File.findOne({
             name,
             projectId,
             parentId,
-            isDeleted:false,
+            isDeleted:false
         })
 
         if(exist){
-            return res.status(400).json({message:"Folder already exists"})
+            return res.status(400).json({message:"folder already exist"})
         }
 
-        const folder = await File.create({
+        const folder=await File.create({
             owner:userId,
             name,
             projectId,
@@ -61,106 +62,113 @@ export const createFolder = async (req,res) =>{
         })
 
         return res.status(201).json(folder)
-    }catch(error){
-        return res.status(500).json({message:`Create folder error : ${error}`})
+
+    } catch (error) {
+         return res.status(500).json({message:`create folder error ${error}`})
     }
 }
 
-
-export const createFile = async (req,res) =>{
-    try{
-        const {projectId,name,parentId,content="",language="plaintext"} = req.body
-        const userId = req.headers["x-user-id"]
-
+export const createFile= async (req,res)=>{
+    try {
+        const {projectId,name,parentId,content="",language="plaintext"}=req.body
+        const userId=req.headers["x-user-id"]
         if(!projectId || !name || !parentId){
-            return res.status(400).json({message:"projectId, parentId, or name are required"})
+            return res.status(400).json({message:"projectId,parentId and name are required!"})
         }
-
-        const exist = await File.findOne({
+       
+        const exist=await File.findOne({
             name,
             projectId,
             parentId,
-            isDeleted:false,
+            isDeleted:false
         })
 
         if(exist){
-            return res.status(400).json({message:"File already exists"})
+            return res.status(400).json({message:"file already exist"})
         }
+     const extension=name.includes(".")?name.split(".").pop():""
 
-        const extension = name.includes(".")?name.split(".").pop():"";
-        const file = await File.create({
+        const file=await File.create({
             owner:userId,
             name,
             projectId,
             type:"file",
-            parentId:parentId || null,
             language,
             content,
             extension,
-            size:content.length
+            size:content.length,
+            parentId:parentId || null
         })
 
         return res.status(201).json(file)
-    }catch(error){
-        return res.status(500).json({message:`Create file error : ${error}`})
+
+    } catch (error) {
+         return res.status(500).json({message:`create file error ${error}`})
     }
 }
 
-export const updateFile =async (req,res) =>{
-    try{
-        const {name,content} = req.body
-        const userId = req.headers["x-user-id"]
 
-        const file= await File.findOne({
+export const updateFile=async (req,res)=>{
+    try {
+        const {name,content}=req.body
+        const userId=req.headers["x-user-id"]
+        
+        
+       
+        const file=await File.findOne({
             _id:req.params.id,
-            owner:userId,
+             owner:userId,
             isDeleted:false
         })
 
         if(!file){
-            return res.status(400).json({message:'file not found'})
+            return res.status(400).json({message:"file not found"})
         }
 
         if(name){
             file.name=name
-            file.extension = name.includes(".")
-            ? name.split(".").pop()
-            : "";
+            const extension=name.includes(".")?name.split(".").pop():""
         }
 
-        if(content !== undefined){
-            file.content = content
-            file.size = content.length
+        if(content!==undefined){
+            file.content=content,
+            file.size=content.length
         }
 
         await file.save()
 
+
         return res.status(200).json(file)
 
-    }catch(error){
-        return res.status(500).json({message:`Update file error : ${error}`})
+    } catch (error) {
+         return res.status(500).json({message:`update file error ${error}`})
     }
 }
 
-export const deleteFile = async (req,res) =>{
-    try{
-        const userId = req.headers["x-user-id"]
-        const file = await File.findByIdAndUpdate(req.params.id,{
+export const deleteFile=async (req,res)=>{
+    try {
+
+        const userId=req.headers["x-user-id"]
+        
+        const file=await File.findByIdAndUpdate(req.params.id,{
             isDeleted:true
         })
 
+       
         return res.status(200).json(file)
-    }catch(error){
-        return res.status(500).json({message:`delete file error : ${error}`})
+
+    } catch (error) {
+         return res.status(500).json({message:`delete file error ${error}`})
     }
 }
 
-export const getFile = async (req,res) =>{
-    try{
-        const userId = req.headers["x-user-id"]
-        const file = await File.findOne({
+export const getFile=async (req,res) => {
+    try {
+        const userId=req.headers["x-user-id"]      
+       
+        const file=await File.findOne({
             _id:req.params.id,
-            owner:userId,
+             owner:userId,
             isDeleted:false
         })
 
@@ -169,31 +177,49 @@ export const getFile = async (req,res) =>{
         }
 
         return res.status(200).json(file)
-    }catch(error){
-        return res.status(500).json({message:`get file error : ${error}`})
+
+    } catch (error) {
+         return res.status(500).json({message:`get file error ${error}`})
     }
 }
 
 
-export const getTree = async (req,res) =>{
-    try{
-        const userId = req.headers["x-user-id"]
-        const {projectId} = req.params
-        const files = await File.find({
+export const getTree=async (req,res) => {
+    try {
+        const userId=req.headers["x-user-id"]      
+         const {projectId}=req.params
+        const files=await File.find({
             projectId,
             owner:userId,
             isDeleted:false
         }).sort({
             name:1,
-            type:-1,
+            type:-1
         })
-        const tree = await buildTree(files)
+
+
+      const tree= buildTree(files)
+     
 
         return res.status(200).json(tree)
-    }catch(error){
-        return res.status(500).json({message:`get tree error : ${error}`})
+
+    } catch (error) {
+         return res.status(500).json({message:`get tree error ${error}`})
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

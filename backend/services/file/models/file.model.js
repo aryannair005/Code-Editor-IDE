@@ -1,38 +1,37 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
-
-const fileSchema = new mongoose.Schema({
+const fileSchema=new mongoose.Schema({
     owner:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",
-        required:true,
+        required:true
     },
     parentId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"File",
-        default:null,
+        default:null
     },
     projectId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Project",
-        required:true,
+        required:true
     },
     name:{
         type:String,
-        required:true,
+        required:true
     },
     type:{
         type:String,
         enum:["file","folder"],
-        required:true,
+        required:true
     },
     extension:{
         type:String,
-        default:"",
+        default:""
     },
     language:{
         type:String,
-        default:"plaintext",
+        default:"plaintext"
     },
     content:{
         type:String,
@@ -40,16 +39,16 @@ const fileSchema = new mongoose.Schema({
     },
     size:{
         type:Number,
-        default:0,
+        default:0
     },
     isDeleted:{
         type:Boolean,
-        default:false,
+        default:false
     }
+
+
 },{timestamps:true})
 
 
-const File = mongoose.model("File",fileSchema)
-
-
+const File=mongoose.model("File",fileSchema)
 export default File
