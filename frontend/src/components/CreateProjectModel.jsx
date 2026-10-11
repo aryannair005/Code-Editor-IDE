@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { createProject } from "../features/project";
 import { useDispatch } from "react-redux";
 import { addNewProject } from "../redux/projectSlice";
+import { createRootFolder } from "../features/file";
 
 const CreateProjectModel = ({ openModel, onClose }) => {
   const [name,setName] = useState("")
@@ -14,6 +15,7 @@ const CreateProjectModel = ({ openModel, onClose }) => {
   const handleCreateProject = async () =>{
     setLoading(true)
     const data = await createProject({name,description})
+    await createRootFolder({projectId:data._id,projectName:data.name})
     onClose()
     dispatch(addNewProject(data))
     setLoading(false)

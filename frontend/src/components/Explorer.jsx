@@ -42,7 +42,7 @@ const Explorer = ({ projectId, tree, reloadTree }) => {
           </div>
         ) : (
           tree.map((node) => (
-            <Folder projectId={id} tree={tree} reloadTree={reloadTree} />
+            <Folder projectId={projectId} tree={tree} reloadTree={reloadTree} node={node} />
           ))
         )}
       </div>
