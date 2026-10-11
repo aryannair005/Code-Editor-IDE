@@ -7,7 +7,7 @@ const plans = [
     {
         key: "free",
         name: "Free",
-        description: "For trying out the VertexAI IDE.",
+        description: "For trying out Synaptix IDE.",
         price: "₹0",
         period: "/month",
         credits: "100 AI credits",
@@ -77,7 +77,7 @@ function Plan() {
                 key: data.key_id,
                 amount: data.order.amount,
                 currency: data.order.currency || "INR",
-                name: "Vertex AI",
+                name: "Synaptix IDE",
                 description: `Plan ${plan.name}`,
                 order_id: data.order.id,
                 handler: async (response) => {
@@ -130,7 +130,7 @@ function Plan() {
                         Back
                     </button>
                     <div className='text-sm font-semibold'>
-                        Vertex AI
+                        Synaptix IDE
                     </div>
 
                 </div>
