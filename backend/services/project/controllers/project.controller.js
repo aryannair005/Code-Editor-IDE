@@ -1,162 +1,148 @@
+import { json } from "express"
 import redis from "../../../shared/redis/redis.js"
 import Project from "../models/project.model.js"
 
-export const createProject = async (req,res) =>{
-    try{
-        const  userId = req.headers["x-user-id"]
-        if(!userId){
-            return res.status(401).json({message:"userId is required"})
-        }
-        const {name,description} = req.body
-        const project = await Project.create({
-            owner:userId,
-            name,
-            description
-        })
+export const createProject=async (req,res) => {
+    try {
+      const userId=req.headers["x-user-id"]
+      if(!userId){
+        return res.status(401).json({message:"userid is required"})
+      }
 
-        const key =`projects-${userId}`
-        await redis.del(key)
-        return res.status(201).json(project)
-    }catch(error){
-        return res.status(500).json({message:`create project error : ${error}`})
+      const {name,description}=req.body
+
+      const project=await Project.create({
+        owner:userId,
+        name,
+        description
+      })
+
+      const key=`projects-${userId}`
+
+      await redis.del(key)
+
+      return res.status(201).json(project)
+
+    } catch (error) {
+        return res.status(500).json({message:`create project error ${error}`})
     }
 }
 
-export const getProjects = async (req,res) =>{
-    try{
-        const userId = req.headers["x-user-id"]
-        if(!userId){
-            return res.status(401).json({message:"userId is required"})
-        }
+export const getProjects=async (req,res) => {
+    try {
+      const userId=req.headers["x-user-id"]
+      if(!userId){
+        return res.status(401).json({message:"userid is required"})
+      }
 
-        const key = `projects-${userId}`
-        let result = await redis.get(key)
-        if(result){
-            return res.status(200).json(JSON.parse(result))
-        }
+      const key=`projects-${userId}`
+      let result=await redis.get(key)
+      if(result){
+        return res.status(200).json(JSON.parse(result))
+      }
 
-        const projects = await Project.find({
-            owner:userId,
-        }).sort({updatedAt:-1})
+      const projects=await Project.find({
+        owner:userId
+      }).sort({updatedAt:-1})
+      
+      await redis.set(key,JSON.stringify(projects))
 
-        await redis.set(key,JSON.stringify(projects))
-        return res.status(200).json(projects)
-    }catch(error){
-        return res.status(500).json({message:`Get all projects error : ${error}`})
-    }
-}
+      return res.status(200).json(projects)
+      
 
-
-export const getProjectById = async(req,res) =>{
-    try{
-        const userId = req.headers["x-user-id"]
-
-        if (!userId) {
-            return res.status(401).json({
-                message: "userId is required"
-            })
-        }
-        const {id} = req.params
-        const project = await Project.findOne({
-            _id:id,
-            owner:userId
-        })
-        if(!project){
-            return res.status(404).json({message:"Project not found"})
-        }
-        project.lastOpenedAt = new Date()
-        await project.save()
-
-        return res.status(200).json(project)
-    }catch(error){
-        return res.status(500).json({message:`Get project by id error : ${error}`})
+    } catch (error) {
+        return res.status(500).json({message:`get projects error ${error}`})
     }
 }
 
 
-export const getStarredProjects = async (req,res) =>{
-    try{
-        const userId = req.headers["x-user-id"]
-        if(!userId){
-            return res.status(401).json({message:"userId is required"})
-        }
-        const key = `starred-projects-${userId}`
-        let result = await redis.get(key)
-        if(result){
-            return res.status(200).json(JSON.parse(result))
-        }
+export const getProjectById=async (req,res) => {
+    try {
+      const {id}=req.params
 
-        const projects = await Project.find({
-            owner:userId,
-            starred:true
-        }).sort({updatedAt:-1})
+      const project=await Project.findById(id);
+      if(!project){
+        return res.status(404).json({message:"project not found"})
+      }
+      project.lastOpenedAt=new Date()
+      await project.save()
+      return res.status(200).json(project)
 
-        await redis.set(key,JSON.stringify(projects))
-
-        return res.status(200).json(projects)
-    }catch (error) {
-    console.error("Get all starred projects error:", error);
-
-    return res.status(500).json({
-        message: "Failed to fetch starred projects",
-        error: error.message,
-    });
-}}  
-
-export const toggleStar =async (req,res) =>{
-    try{
-        const userId = req.headers["x-user-id"]
-
-        if (!userId) {
-            return res.status(401).json({
-                message: "userId is required"
-            })
-        }
-        const {id} = req.params
-        const project = await Project.findOne({
-            _id:id,
-            owner:userId
-        })
-        if(!project){
-            return res.status(404).json({message:"Project not found"})
-        }
-        project.starred = !project.starred
-        await project.save()
-
-        const key = `starred-projects-${userId}`
-        await redis.del(`projects-${userId}`)   
-        await redis.del(key)
-
-        return res.status(200).json(project)
-    }catch(error){
-        return res.status(500).json({message:`toggle starred project error : ${error}`})
+    } catch (error) {
+        return res.status(500).json({message:`get project by id error ${error}`})
     }
 }
 
-export const deleteProject = async(req,res) =>{
-    try{
-        const userId = req.headers["x-user-id"]
 
-        if (!userId) {
-            return res.status(401).json({
-                message: "userId is required"
-            })
-        }
+export const getStarredProjects=async (req,res) => {
+    try {
+      const userId=req.headers["x-user-id"]
+      if(!userId){
+        return res.status(401).json({message:"userid is required"})
+      }
 
-        const {id} = req.params
-        const project = await Project.findOneAndDelete({
-            _id:id,
-            owner:userId
-        })
-        
-        if(!project){
-            return res.status(404).json({message:"Project not found"})
-        }
-        await redis.del(`projects-${userId}`)
-        await redis.del(`starred-projects-${userId}`)
+      const key=`starred-projects-${userId}`
+      let result=await redis.get(key)
+      if(result){
+        return res.status(200).json(JSON.parse(result))
+      }
+      const projects=await Project.find({
+        owner:userId,
+        starred:true
+      }).sort({updatedAt:-1})
 
-        return res.status(200).json(project)
-    }catch(error){
-        return res.status(500).json({message:`project delete error : ${error}`})
+     await redis.set(key,JSON.stringify(projects))
+
+      return res.status(200).json(projects)
+
+    } catch (error) {
+        return res.status(500).json({message:`get starred projects error ${error}`})
     }
 }
+
+
+export const toggleStar=async (req,res) => {
+   try {
+     
+      const {id}=req.params
+       const userId=req.headers["x-user-id"]
+      const project=await Project.findById(id)
+      if(!project){
+        return res.status(404).json({message:"project not found"})
+      }
+      project.starred=!project.starred
+      await project.save()
+      const key=`starred-projects-${userId}`
+      await redis.del(key)
+      await redis.del(`projects-${userId}`)
+
+      return res.status(200).json(projects)
+
+    } catch (error) {
+        return res.status(500).json({message:`toggle star error ${error}`})
+    }
+}
+
+
+
+export const deleteProject=async (req,res) => {
+   try {
+  
+      const {id}=req.params
+      const project=await Project.findByIdAndDelete(id)
+      if(!project){
+        return res.status(404).json({message:"project not found"})
+      }
+     
+      const key=`projects-${userId}`
+      await redis.del(key)
+
+      return res.status(200).json(project)
+
+    } catch (error) {
+        return res.status(500).json({message:`project delete error ${error}`})
+    }
+}
+
+
+

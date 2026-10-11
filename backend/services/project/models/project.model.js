@@ -1,29 +1,30 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
-const projectSchema = new mongoose.Schema({
+const projectSchema=new mongoose.Schema({
     owner:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",
-        required:true,
+        required:true
     },
     name:{
         type:String,
-        required:true,
+        required:true
     },
     description:{
-        type:String,
+        type:String
     },
     starred:{
         type:Boolean,
-        default:false,
+        default:false
     },
     lastOpenedAt:{
         type:Date,
         default:Date.now
     }
-},{timestamps:true})
 
+},{
+    timestamps:true
+})
 
-const Project = mongoose.model("Project",projectSchema)
-
+const Project=mongoose.model("Project",projectSchema)
 export default Project
