@@ -2,11 +2,11 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth"
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "vertexai-746c4.firebaseapp.com",
-  projectId: "vertexai-746c4",
-  storageBucket: "vertexai-746c4.firebasestorage.app",
-  messagingSenderId: "769324829406",
-  appId: "1:769324829406:web:0b5cdba46cfd44eb41104f"
+  authDomain: "code-editor-2ee8c.firebaseapp.com",
+  projectId: "code-editor-2ee8c",
+  storageBucket: "code-editor-2ee8c.firebasestorage.app",
+  messagingSenderId: "505077700642",
+  appId: "1:505077700642:web:baf31e7f57e561a27a127b"
 };
 
 // Initialize Firebase
