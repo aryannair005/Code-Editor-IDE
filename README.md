@@ -1,4 +1,4 @@
-# Code Editor IDE
+# Synaptix IDE
 
 A browser-based development environment that combines a code editor, project and file management, an integrated terminal, and AI-assisted coding in one workspace. The application is built with React and Node.js and uses a service-oriented backend to separate authentication, project operations, file operations, AI workflows, terminal sessions, and payments.
 
@@ -6,7 +6,7 @@ Repository: https://github.com/aryannair005/Code-Editor-IDE
 
 ## Overview
 
-Code Editor IDE is designed to bring common development tasks into a single interface. Users can work with project files, edit source code, interact with an AI coding assistant, and use a terminal connected to a project workspace.
+Synaptix IDE is designed to bring common development tasks into a single interface. Users can work with project files, edit source code, interact with an AI coding assistant, and use a terminal connected to a project workspace.
 
 The backend is organized as multiple Node.js services behind an API gateway. Redis is used for session storage, while MongoDB is used by the application services for persistent data. Firebase Authentication is used for sign-in.
 
@@ -414,4 +414,4 @@ No license is currently specified in this repository. Unless a license is added,
 **Aryan Nair**
 
 - GitHub: [@aryannair005](https://github.com/aryannair005)
-- Project: [Code-Editor-IDE](https://github.com/aryannair005/Code-Editor-IDE)
+- Project: [Synaptix IDE](https://github.com/aryannair005/Code-Editor-IDE)
