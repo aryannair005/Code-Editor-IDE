@@ -14,7 +14,7 @@ app.use(express.json())
 
 const fileServiceUrl = process.env.FILE_SERVICE_URL || "http://localhost:8003"
 
-const WORKSPACE_ROOT = path.join(os.tmpdir(), "vertex-ai")   // c://temp/vertex-ai/1243
+const WORKSPACE_ROOT = path.join(os.tmpdir(), "synaptix-ide")   // c://temp/vertex-ai/1243
 
 const SHELL = process.platform === "win32" ? "powershell.exe" : "bash"
 
