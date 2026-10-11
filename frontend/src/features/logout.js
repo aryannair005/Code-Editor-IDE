@@ -1,10 +1,10 @@
-import {api} from "../utils/axios.js"
+import { api } from "../utils/axios"
 
-export const logout = async () =>{
-    try{
-        const {data} = await api.get("/api/auth/logout")
+export const logout=async () => {
+    try {
+        const {data}=await api.get("/api/auth/logout")
         return data
-    }catch(error){
+    } catch (error) {
         console.log(error)
         return null
     }
